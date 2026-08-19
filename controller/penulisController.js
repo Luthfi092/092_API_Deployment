@@ -41,3 +41,49 @@ async function register(req, res) {
     return res.status(500).json({ message: error.message });
   }
 }
+
+async function login(req, res) {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "email dan password wajib diisi." });
+    }
+
+    const penulis = await Penulis.findOne({
+      where: { email },
+    });
+
+    if (!penulis) {
+      return res.status(401).json({ message: "email atau password salah." });
+    }
+
+    const isMatch = await bcrypt.compare(password, penulis.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "email atau password salah." });
+    }
+
+    const token = jwt.sign(
+      {
+        id: penulis.id,
+        nama: penulis.nama,
+        email: penulis.email,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRES,
+      }
+    );
+
+    return res.status(200).json({
+      message: "alhamdulillah login berhasil",
+      token,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+}
+
