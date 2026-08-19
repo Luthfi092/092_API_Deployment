@@ -52,4 +52,18 @@ async function updateGenre(req, res) {
   }
 }
 
+async function deleteGenre(req, res) {
+  const { id } = req.params;
+  try {
+    const genre = await db.Genre.findByPk(id);
+    if (!genre) {
+      return res.status(404).json({ error: "genre not found" });
+    }
+    await genre.destroy();
+    res.status(200).json({ message: "genre deleted successfully" });
+  } catch (err) {
+    console.error("error deleting genre", err.message);
+    res.status(500).json({ error: "failed to delete genre" });
+  }
+}
 
