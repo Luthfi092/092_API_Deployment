@@ -55,3 +55,17 @@ async function updateKomik(req, res) {
   }
 }
 
+async function deleteKomik(req, res) {
+  const { id } = req.params;
+  try {
+    const komik = await db.Komik.findByPk(id);
+    if (!komik) {
+      return res.status(404).json({ error: "komik not found" });
+    }
+    await komik.destroy();
+    res.status(200).json({ message: "komik deleted successfully" });
+  } catch (err) {
+    console.error("error deleting komik", err.message);
+    res.status(500).json({ error: "failed to delete komik" });
+  }
+}
