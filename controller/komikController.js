@@ -24,5 +24,16 @@ async function getKomikById(req, res) {
   }
 }
 
+async function createKomik(req, res) {
+  const { judul, sinopsis, tahun_terbit, penulis_id } = req.body;
+  try {
+    const newKomik = await db.Komik.create({ judul, sinopsis, tahun_terbit, penulis_id });
+    res.status(201).json(newKomik);
+  } catch (err) {
+    console.error("error creating komik: ", err.message);
+    res.status(500).json({ error: "failed to create komik" });
+  }
+}
+
 
 
